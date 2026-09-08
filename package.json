@@ -4,14 +4,32 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite"
+        "dev": "vite",
+        "test": "vitest run",
+        "test:watch": "vitest"
     },
     "devDependencies": {
         "@tailwindcss/vite": "^4.0.0",
+        "@testing-library/jest-dom": "^7.0.1",
+        "@testing-library/react": "^16.3.3",
+        "@vitejs/plugin-react": "^5.2.0",
         "axios": "^1.11.0",
         "concurrently": "^9.0.1",
+        "jsdom": "^30.0.1",
         "laravel-vite-plugin": "^2.0.0",
         "tailwindcss": "^4.0.0",
-        "vite": "^7.0.7"
+        "vite": "^7.0.7",
+        "vitest": "^5.0.0"
+    },
+    "dependencies": {
+        "@ckeditor/ckeditor5-react": "^11.2.0",
+        "@dnd-kit/core": "^6.3.1",
+        "@dnd-kit/sortable": "^10.0.0",
+        "@dnd-kit/utilities": "^3.2.2",
+        "ckeditor5": "^48.5.0",
+        "lucide-react": "^1.45.0",
+        "react": "^19.3.0",
+        "react-dom": "^19.3.0",
+        "react-router-dom": "^7.18.3"
     }
 }
