@@ -1,11 +1,21 @@
 <?php
 
+use App\Http\Controllers\PageController;
 use App\Http\Controllers\PrivilegeController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/pages/trash', [PageController::class, 'trash'])->middleware('privilege:pages.restore');
+    Route::post('/pages/{page}/restore', [PageController::class, 'restore'])->middleware('privilege:pages.restore');
+    Route::delete('/pages/{page}/force', [PageController::class, 'forceDelete'])->middleware('privilege:pages.force_delete');
+    Route::get('/pages', [PageController::class, 'index'])->middleware('privilege:pages.view');
+    Route::post('/pages', [PageController::class, 'store'])->middleware('privilege:pages.create');
+    Route::get('/pages/{page}', [PageController::class, 'show'])->middleware('privilege:pages.view');
+    Route::match(['put', 'patch'], '/pages/{page}', [PageController::class, 'update'])->middleware('privilege:pages.update');
+    Route::delete('/pages/{page}', [PageController::class, 'destroy'])->middleware('privilege:pages.delete');
+
     Route::get('/users', [UserController::class, 'index'])->middleware('privilege:users.view');
     Route::post('/users', [UserController::class, 'store'])->middleware('privilege:users.create');
     Route::get('/users/{user}', [UserController::class, 'show'])->middleware('privilege:users.view');
