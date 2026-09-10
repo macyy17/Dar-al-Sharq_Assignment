@@ -14,7 +14,7 @@ class PageController extends Controller
     public function index(Request $request)
     {
         $query = Page::query()
-            ->with(['creator', 'updater'])
+            ->with(['creator', 'updater', 'menuItems'])
             ->latest('updated_at');
 
         if ($search = $request->string('search')->trim()->toString()) {
@@ -28,6 +28,10 @@ class PageController extends Controller
                 'published' => $query->publishedAndDue(),
                 default => null,
             };
+        }
+
+        if ($menuId = $request->integer('menu_id')) {
+            $query->whereHas('menuItems', fn ($query) => $query->whereKey($menuId));
         }
 
         return PageResource::collection($query->paginate(15)->withQueryString());
@@ -44,13 +48,13 @@ class PageController extends Controller
         }
 
         return new PageResource(
-            Page::create($data)->load(['creator', 'updater'])
+            Page::create($data)->load(['creator', 'updater', 'menuItems'])
         );
     }
 
     public function show(Page $page): PageResource
     {
-        return new PageResource($page->load(['creator', 'updater']));
+        return new PageResource($page->load(['creator', 'updater', 'menuItems']));
     }
 
     public function update(PageRequest $request, Page $page): PageResource
@@ -69,7 +73,7 @@ class PageController extends Controller
         $page->update($data);
 
         return new PageResource(
-            $page->refresh()->load(['creator', 'updater'])
+            $page->refresh()->load(['creator', 'updater', 'menuItems'])
         );
     }
 

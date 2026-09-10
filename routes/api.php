@@ -1,12 +1,24 @@
 <?php
 
+use App\Http\Controllers\MenuItemController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\PublicContentController;
 use App\Http\Controllers\PrivilegeController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/public/navigation', [PublicContentController::class, 'navigation']);
+Route::get('/public/pages/{slug}', [PublicContentController::class, 'page']);
+
 Route::middleware('auth:sanctum')->group(function () {
+    Route::put('/menu-items/reorder', [MenuItemController::class, 'reorder'])->middleware('privilege:menus.update');
+    Route::get('/menu-items', [MenuItemController::class, 'index'])->middleware('privilege:menus.view');
+    Route::post('/menu-items', [MenuItemController::class, 'store'])->middleware('privilege:menus.create');
+    Route::get('/menu-items/{menuItem}', [MenuItemController::class, 'show'])->middleware('privilege:menus.view');
+    Route::match(['put', 'patch'], '/menu-items/{menuItem}', [MenuItemController::class, 'update'])->middleware('privilege:menus.update');
+    Route::delete('/menu-items/{menuItem}', [MenuItemController::class, 'destroy'])->middleware('privilege:menus.delete');
+
     Route::get('/pages/trash', [PageController::class, 'trash'])->middleware('privilege:pages.restore');
     Route::post('/pages/{page}/restore', [PageController::class, 'restore'])->middleware('privilege:pages.restore');
     Route::delete('/pages/{page}/force', [PageController::class, 'forceDelete'])->middleware('privilege:pages.force_delete');

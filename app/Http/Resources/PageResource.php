@@ -34,6 +34,10 @@ class PageResource extends JsonResource
                 'id' => $this->deleter->id,
                 'name' => $this->deleter->name,
             ] : null),
+            'menu_items' => $this->whenLoaded('menuItems', fn () => $this->menuItems->map(fn ($item) => [
+                'id' => $item->id,
+                'label' => $item->label,
+            ])),
         ];
     }
 }
