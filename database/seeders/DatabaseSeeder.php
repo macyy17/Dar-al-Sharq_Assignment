@@ -2,12 +2,14 @@
 
 namespace Database\Seeders;
 
+use App\Models\Page;
 use App\Models\Privilege;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class DatabaseSeeder extends Seeder
 {
@@ -51,7 +53,22 @@ class DatabaseSeeder extends Seeder
         $admin->privileges()->sync($privileges->pluck('id'));
         $moderator->privileges()->sync($privileges->only(['pages.view', 'pages.create', 'pages.update'])->pluck('id'));
 
-        User::create([
+
+        $demoAssets = [
+            'about-cover.webp' => base_path('template/src/assets/carousel/city.webp'),
+            'about-inline.webp' => base_path('template/src/assets/carousel/desk.webp'),
+            'services-cover.webp' => base_path('template/src/assets/carousel/editing.webp'),
+            'services-inline.webp' => base_path('template/src/assets/carousel/camera.webp'),
+            'team-cover.webp' => base_path('template/src/assets/carousel/studio.webp'),
+            'team-inline.webp' => base_path('template/src/assets/carousel/mountain.webp'),
+        ];
+        foreach ($demoAssets as $name => $source) {
+            if (is_file($source)) {
+                Storage::disk('public')->put('page-content/'.$name, file_get_contents($source));
+            }
+        }
+
+        $adminUser = User::create([
             'name' => 'CMS Administrator',
             'email' => 'admin@example.com',
             'password' => Hash::make('password'),
@@ -65,6 +82,16 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('password'),
             'role_id' => $moderator->id,
             'is_active' => true,
+        ]);
+
+        Page::create([
+            'title' => 'Home',
+            'slug' => 'home',
+            'body' => '',
+            'is_home' => true,
+            'status' => 'published',
+            'created_by' => $adminUser->id,
+            'updated_by' => $adminUser->id,
         ]);
     }
 }

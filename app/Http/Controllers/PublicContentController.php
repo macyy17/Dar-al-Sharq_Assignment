@@ -21,13 +21,19 @@ class PublicContentController extends Controller
                 return [
                     'id' => $item->id,
                     'label' => $item->label,
-                    'url' => $item->page ? '/pages/'.$item->page->slug : null,
+                    'url' => $item->page ? '/'.$item->page->slug : null,
                     'children' => $children->filter()->values(),
                 ];
             })->filter()->values();
         };
 
         return response()->json(['data' => $build()]);
+    }
+
+    public function home(): PageResource
+    {
+        $page = Page::publishedAndDue()->where('is_home', true)->firstOrFail();
+        return new PageResource($page);
     }
 
     public function page(string $slug): PageResource

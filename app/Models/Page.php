@@ -13,62 +13,27 @@ class Page extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = [
-        'title',
-        'slug',
-        'body',
-        'cover_image_path',
-        'status',
-        'publish_at',
-        'created_by',
-        'updated_by',
-        'deleted_by',
-    ];
+    protected $fillable = ['title', 'slug', 'is_home', 'body', 'blocks', 'cover_image_path', 'status', 'publish_at', 'created_by', 'updated_by', 'deleted_by'];
 
     protected function casts(): array
     {
-        return ['publish_at' => 'datetime'];
+        return ['publish_at' => 'datetime', 'is_home' => 'boolean', 'blocks' => 'array'];
     }
 
-    public function creator(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'created_by');
-    }
-
-    public function updater(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'updated_by');
-    }
-
-    public function deleter(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'deleted_by');
-    }
-
-    public function menuItems(): HasMany
-    {
-        return $this->hasMany(MenuItem::class);
-    }
+    public function creator(): BelongsTo { return $this->belongsTo(User::class, 'created_by'); }
+    public function updater(): BelongsTo { return $this->belongsTo(User::class, 'updated_by'); }
+    public function deleter(): BelongsTo { return $this->belongsTo(User::class, 'deleted_by'); }
+    public function menuItems(): HasMany { return $this->hasMany(MenuItem::class); }
 
     public function scopePublishedAndDue(Builder $query): Builder
     {
-        return $query
-            ->where('status', 'published')
-            ->where(fn (Builder $query) => $query
-                ->whereNull('publish_at')
-                ->orWhere('publish_at', '<=', now()));
+        return $query->where('status', 'published')->where(fn (Builder $q) => $q->whereNull('publish_at')->orWhere('publish_at', '<=', now()));
     }
 
     public function getPublishingStateAttribute(): string
     {
-        if ($this->status === 'draft') {
-            return 'Draft';
-        }
-
-        if ($this->publish_at?->isFuture()) {
-            return 'Scheduled';
-        }
-
+        if ($this->status === 'draft') return 'Draft';
+        if ($this->publish_at?->isFuture()) return 'Scheduled';
         return 'Published';
     }
 }
