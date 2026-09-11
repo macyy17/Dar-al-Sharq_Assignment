@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EditorImageController;
 use App\Http\Controllers\MenuItemController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PublicContentController;
@@ -13,6 +14,8 @@ Route::get('/public/navigation', [PublicContentController::class, 'navigation'])
 Route::get('/public/pages/{slug}', [PublicContentController::class, 'page']);
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/editor/images', [EditorImageController::class, 'store'])->middleware('privilege:pages.update');
+
     Route::get('/dashboard', DashboardController::class)->middleware('privilege:pages.view');
 
     Route::put('/menu-items/reorder', [MenuItemController::class, 'reorder'])->middleware('privilege:menus.update');

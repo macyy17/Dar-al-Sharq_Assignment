@@ -23,7 +23,7 @@ class PageRequest extends FormRequest
                 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/',
                 Rule::unique('pages', 'slug')->ignore($this->route('page')),
             ],
-            'body' => ['nullable', 'string'],
+            'body' => ['nullable', 'string', 'max:500000'],
             'status' => ['required', Rule::in(['draft', 'published'])],
             'publish_at' => ['nullable', 'date'],
             'cover_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:8192'],

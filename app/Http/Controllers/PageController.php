@@ -5,12 +5,17 @@ namespace App\Http\Controllers;
 use App\Http\Requests\PageRequest;
 use App\Http\Resources\PageResource;
 use App\Models\Page;
+use App\Services\PageContentSanitizer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class PageController extends Controller
 {
+    public function __construct(private readonly PageContentSanitizer $sanitizer)
+    {
+    }
+
     public function index(Request $request)
     {
         $query = Page::query()
@@ -40,6 +45,7 @@ class PageController extends Controller
     public function store(PageRequest $request): PageResource
     {
         $data = $request->safe()->except('cover_image');
+        $data['body'] = $this->sanitizer->sanitize($data['body'] ?? '');
         $data['created_by'] = $request->user()->id;
         $data['updated_by'] = $request->user()->id;
 
@@ -60,6 +66,9 @@ class PageController extends Controller
     public function update(PageRequest $request, Page $page): PageResource
     {
         $data = $request->safe()->except('cover_image');
+        if (array_key_exists('body', $data)) {
+            $data['body'] = $this->sanitizer->sanitize($data['body']);
+        }
         $data['updated_by'] = $request->user()->id;
 
         if ($request->hasFile('cover_image')) {
