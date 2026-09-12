@@ -18,3 +18,38 @@ html[dir='rtl'] {
 html[dir='ltr'] {
     direction: ltr;
 }
+
+.page-editor .ck-editor__editable_inline {
+    min-height: 360px;
+    padding: 1.25rem 1.5rem;
+}
+
+.page-editor .ck.ck-editor__main > .ck-editor__editable {
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 0;
+}
+
+.cms-content {
+    color: #334155;
+    font-size: 1rem;
+    line-height: 1.8;
+}
+
+.cms-content > * + * { margin-top: 1.25rem; }
+.cms-content h2 { margin-top: 2.5rem; font-size: 1.875rem; line-height: 1.25; font-weight: 700; color: #0f172a; }
+.cms-content h3 { margin-top: 2rem; font-size: 1.5rem; line-height: 1.3; font-weight: 700; color: #0f172a; }
+.cms-content h4 { margin-top: 1.75rem; font-size: 1.25rem; line-height: 1.4; font-weight: 700; color: #0f172a; }
+.cms-content p { line-height: 1.8; }
+.cms-content strong { font-weight: 700; color: #0f172a; }
+.cms-content a { color: #0f766e; text-decoration: underline; text-underline-offset: 3px; }
+.cms-content ul { list-style: disc; padding-inline-start: 1.5rem; }
+.cms-content ol { list-style: decimal; padding-inline-start: 1.5rem; }
+.cms-content li + li { margin-top: .4rem; }
+.cms-content blockquote { border-inline-start: 4px solid #0f766e; padding-inline-start: 1.25rem; color: #475569; font-style: italic; }
+.cms-content figure { margin-inline: 0; }
+.cms-content img { max-width: 100%; height: auto; border-radius: 1rem; }
+.cms-content figcaption { margin-top: .5rem; text-align: center; font-size: .875rem; color: #64748b; }
+.cms-content table { width: 100%; border-collapse: collapse; }
+.cms-content th, .cms-content td { border: 1px solid #cbd5e1; padding: .75rem; text-align: start; }
+.cms-content th { background: #f8fafc; font-weight: 700; color: #0f172a; }

@@ -14,6 +14,7 @@ class PageResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'slug' => $this->slug,
+            'public_url' => page_public_url($this->resource),
                 'body' => $this->body ?? '',
                 'blocks' => $this->blocks ?? [],
                 'is_home' => (bool) $this->is_home,

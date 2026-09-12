@@ -1,59 +1,227 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Dar Al Sharq CMS
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A production-minded content-management assignment built with Laravel 12, PHP 8.2+, Laravel Sanctum, React 19, CKEditor 5 and Swagger/OpenAPI.
 
-## About Laravel
+## Implemented requirements
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Sanctum first-party session authentication.
+- Database-driven users, roles and privileges; authorization is based on privileges rather than hard-coded role names.
+- Administrator CRUD for pages, users, roles and privileges.
+- Moderator page list/create/update workflow without page delete or user/role/privilege management.
+- Pages with title, slug, CKEditor body, cover image, draft/published state and optional publish date.
+- Scheduled visibility: published pages with a future `publish_at` are hidden from the public API until due.
+- Page audit fields (`created_by`, `updated_by`, `deleted_by`) plus soft-delete, Admin restore and permanent delete.
+- Paginated page API with title search plus status and menu filters.
+- Sortable, nestable dynamic menu linked to pages; public navigation reflects persisted order and nesting.
+- Public React site with an editable CMS home page and root-level page URLs such as `/about-us`.
+- CKEditor image uploads to Laravel public storage and server-side HTML sanitization.
+- Structured page blocks (carousel, image/text, CTA, gallery/lightbox, video, FAQ, cards, quote, divider and button) as an additional CMS feature.
+- Live page preview in the page editor and a collapsible CMS sidebar.
+- Custom helper `page_public_url()` used by the page API resource.
+- Model factories, database migrations and seed data.
+- Swagger/OpenAPI documentation served by the application.
+- PHPUnit feature/unit tests plus Vitest frontend tests.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Requirements
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- PHP 8.2+
+- Composer
+- Node.js and npm
+- MySQL 8+ or PostgreSQL (the committed example configuration uses MySQL)
 
-## Learning Laravel
+## Clean checkout setup
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+The assignment requires MySQL or PostgreSQL. The committed `.env.example` is configured for MySQL.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 1. Create the database
 
-## Laravel Sponsors
+Using MySQL:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```sql
+CREATE DATABASE dar_al_sharq CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
 
-### Premium Partners
+### 2. Prepare the application
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```bash
+git clone <repository-url>
+cd Dar-al-Sharq_Assignment
+composer run setup
+```
 
-## Contributing
+`composer run setup` installs PHP and JavaScript dependencies, creates `.env` when it does not exist, generates the application key, creates the public storage link, generates Swagger documentation, and builds the frontend.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 3. Configure database credentials
 
-## Code of Conduct
+Open `.env` and verify/update:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=dar_al_sharq
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-## Security Vulnerabilities
+### 4. Run migrations and seeders
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+php artisan migrate --seed
+php artisan serve
+```
 
-## License
+For frontend development, run this in another terminal:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+npm run dev
+```
+
+Open `http://127.0.0.1:8000` unless Laravel was started on another host/port.
+
+> Automated tests use an in-memory SQLite database through `phpunit.xml`. SQLite is used only for isolated tests; the application configuration and documented runtime database use MySQL as required by the assignment.
+
+## Seeded login credentials
+
+| Role | Email | Password |
+| --- | --- | --- |
+| Administrator | `admin@example.com` | `password` |
+| Moderator | `moderator@example.com` | `password` |
+
+These credentials are intended for local/demo use only. Change them for any public deployment.
+
+## Main routes
+
+- Public site: `/`
+- Public CMS pages: `/{slug}` (for example `/about-us`)
+- CMS sign-in: `/login`
+- Administrator workspace: `/admin`
+- Moderator workspace: `/moderator`
+- Swagger UI: `/api/documentation`
+
+## API behavior
+
+The authenticated page list supports:
+
+- `search` — title search
+- `status` — `draft`, `published`, or `scheduled`
+- `menu_id` — pages linked to a menu item
+- `per_page` — pagination size, capped at 100
+
+Public endpoints only expose pages that are both `published` and due. Draft, future-scheduled and soft-deleted pages are excluded.
+
+## Authorization
+
+Privileges are stored as data and assigned through roles. The seeded Moderator receives only:
+
+- `pages.view`
+- `pages.create`
+- `pages.update`
+
+The seeded Administrator receives all seeded privileges, including page restore/permanent-delete and user/role/privilege/menu management.
+
+## Storage and editor images
+
+Cover images and CKEditor/page-block images use Laravel's `public` filesystem disk. Run:
+
+```bash
+php artisan storage:link
+```
+
+The editor upload endpoint accepts JPG, PNG and WebP files up to 8 MB and requires authenticated page-update privilege.
+
+## Swagger / OpenAPI
+
+OpenAPI attributes are maintained in:
+
+```text
+app/OpenApi/Documentation.php
+```
+
+Generate the spec after API changes:
+
+```bash
+php artisan l5-swagger:generate
+```
+
+Then open:
+
+```text
+/api/documentation
+```
+
+## Tests
+
+Run the complete verification suite with:
+
+```bash
+php artisan test
+npm test -- --run
+npm run build
+php artisan l5-swagger:generate
+```
+
+For a clean database verification:
+
+```bash
+php artisan migrate:fresh --seed
+```
+
+`migrate:fresh` destroys the configured database, so use it only on a local/test database.
+
+## Production build
+
+Build React/Vite assets with:
+
+```bash
+npm ci
+npm run build
+php artisan migrate --force
+php artisan storage:link
+php artisan l5-swagger:generate
+php artisan optimize
+```
+
+In production, point Nginx/Apache at Laravel's `public/` directory and use PHP-FPM. Do not run the Vite development server.
+
+## Project structure
+
+- `app/Http/Controllers` — API logic
+- `app/Http/Requests` — request validation
+- `app/Http/Resources` — API response shaping
+- `app/Models` — Eloquent models and publishing relationships/scopes
+- `app/Services` — HTML and structured-block sanitization
+- `app/Support/helpers.php` — custom application helper
+- `app/OpenApi/Documentation.php` — Swagger/OpenAPI attributes
+- `database/migrations` — database schema
+- `database/factories` — model factories
+- `database/seeders` — seeded roles, privileges, users and home page
+- `resources/js` — React CMS and public frontend
+- `tests/Feature` / `tests/Unit` — Laravel automated tests
+- `tests/Frontend` — Vitest/Testing Library tests
+
+## Publishing implementation note
+
+Scheduled publishing is implemented with query-time visibility checks. A page becomes public automatically once `publish_at <= now()`; no background scheduler is required for the core assignment behavior.
+
+## Sharing with another developer
+
+Give the developer access to the GitHub repository. After cloning, they should:
+
+1. Create a MySQL database named `dar_al_sharq` (or another name of their choice).
+2. Run `composer run setup`.
+3. Set their own MySQL credentials in `.env`.
+4. Run `php artisan migrate --seed`.
+5. Run `php artisan serve`.
+
+Example:
+
+```bash
+git clone <repository-url>
+cd Dar-al-Sharq_Assignment
+composer run setup
+php artisan migrate --seed
+php artisan serve
+```
+
+Local files such as `.env`, `vendor/`, `node_modules/`, `public/build/`, logs and test caches are intentionally excluded from Git. Each developer uses their own MySQL/PostgreSQL database and local environment configuration.

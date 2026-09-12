@@ -1,0 +1,1340 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Dar Al Sharq CMS API",
+        "description": "Laravel 12 CMS API for authentication, privilege-based administration, page publishing, menus, and public content.",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/auth/login": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Sign in with email and password",
+                "operationId": "a9f7f55169becccc406c09ce00650f24",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Authenticated user"
+                    },
+                    "422": {
+                        "description": "Invalid credentials"
+                    }
+                },
+                "servers": [
+                    {
+                        "url": "/",
+                        "description": "Application server"
+                    }
+                ]
+            }
+        },
+        "/api/auth/me": {
+            "get": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Get authenticated user and privileges",
+                "operationId": "320441e4c009253b08761ca0e41b31e7",
+                "responses": {
+                    "200": {
+                        "description": "Authenticated user"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "session": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "/",
+                        "description": "Application server"
+                    }
+                ]
+            }
+        },
+        "/api/auth/logout": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Sign out",
+                "operationId": "172cc926e1cde673adea0fbe4d1a5ce2",
+                "responses": {
+                    "200": {
+                        "description": "Logged out"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "session": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "/",
+                        "description": "Application server"
+                    }
+                ]
+            }
+        },
+        "/api/dashboard": {
+            "get": {
+                "tags": [
+                    "Dashboard"
+                ],
+                "summary": "Get workspace dashboard metrics",
+                "operationId": "6d1e796ae2c9dc4b8eca92bbe4c02bbb",
+                "responses": {
+                    "200": {
+                        "description": "Dashboard data"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "session": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "/",
+                        "description": "Application server"
+                    }
+                ]
+            }
+        },
+        "/api/users": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "List users",
+                "operationId": "0fa6f19c4b42b8f165aa754728b9a9ef",
+                "responses": {
+                    "200": {
+                        "description": "Paginated users"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "session": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "/",
+                        "description": "Application server"
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Create user",
+                "operationId": "44918860f4238b7a5df1576d4ccb7696",
+                "responses": {
+                    "201": {
+                        "description": "User created"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "session": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "/",
+                        "description": "Application server"
+                    }
+                ]
+            }
+        },
+        "/api/users/{user}": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get user",
+                "operationId": "86b5119e839eea08628d6ba8e045be62",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                },
+                "security": [
+                    {
+                        "session": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "/",
+                        "description": "Application server"
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Soft-delete user",
+                "operationId": "a07aa02c1cc1cad974287189eeab839c",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Deleted"
+                    },
+                    "422": {
+                        "description": "Cannot delete current user"
+                    }
+                },
+                "security": [
+                    {
+                        "session": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "/",
+                        "description": "Application server"
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Update user",
+                "operationId": "fe120e465e6420b9be2db5d0aae1ec0a",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User updated"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "session": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "/",
+                        "description": "Application server"
+                    }
+                ]
+            }
+        },
+        "/api/roles": {
+            "get": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "List roles",
+                "operationId": "ef43ddda8e6c5c07fcab828c9014b48f",
+                "responses": {
+                    "200": {
+                        "description": "Roles"
+                    }
+                },
+                "security": [
+                    {
+                        "session": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "/",
+                        "description": "Application server"
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Create role",
+                "operationId": "43cbc2a7ea5add1afd022f54ff78091d",
+                "responses": {
+                    "201": {
+                        "description": "Role created"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "session": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "/",
+                        "description": "Application server"
+                    }
+                ]
+            }
+        },
+        "/api/roles/{role}": {
+            "get": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Get role",
+                "operationId": "91b83eaa2d0dcb14952393df0b9e6a38",
+                "parameters": [
+                    {
+                        "name": "role",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Role"
+                    }
+                },
+                "security": [
+                    {
+                        "session": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "/",
+                        "description": "Application server"
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Delete role",
+                "operationId": "7769444cfcd3c5caab19cf1f0ed829a6",
+                "parameters": [
+                    {
+                        "name": "role",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Deleted"
+                    },
+                    "409": {
+                        "description": "Role still has users"
+                    }
+                },
+                "security": [
+                    {
+                        "session": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "/",
+                        "description": "Application server"
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Update role and privileges",
+                "operationId": "b3aeba329197ea9f408b04ac21d1b75e",
+                "parameters": [
+                    {
+                        "name": "role",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Role updated"
+                    }
+                },
+                "security": [
+                    {
+                        "session": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "/",
+                        "description": "Application server"
+                    }
+                ]
+            }
+        },
+        "/api/privileges": {
+            "get": {
+                "tags": [
+                    "Privileges"
+                ],
+                "summary": "List privileges",
+                "operationId": "6a46c135d00a8efe77ec89f3b2e9d24a",
+                "responses": {
+                    "200": {
+                        "description": "Privileges"
+                    }
+                },
+                "security": [
+                    {
+                        "session": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "/",
+                        "description": "Application server"
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Privileges"
+                ],
+                "summary": "Create privilege",
+                "operationId": "4ffad64ce4a9dbc2c1f90ae3d7cb8c83",
+                "responses": {
+                    "201": {
+                        "description": "Privilege created"
+                    }
+                },
+                "security": [
+                    {
+                        "session": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "/",
+                        "description": "Application server"
+                    }
+                ]
+            }
+        },
+        "/api/privileges/{privilege}": {
+            "get": {
+                "tags": [
+                    "Privileges"
+                ],
+                "summary": "Get privilege",
+                "operationId": "17ee4fd2fcc69019863351d719157bbe",
+                "parameters": [
+                    {
+                        "name": "privilege",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Privilege"
+                    }
+                },
+                "security": [
+                    {
+                        "session": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "/",
+                        "description": "Application server"
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Privileges"
+                ],
+                "summary": "Delete privilege",
+                "operationId": "fe3da0ab3687a5f7906c4cb615799e87",
+                "parameters": [
+                    {
+                        "name": "privilege",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Deleted"
+                    }
+                },
+                "security": [
+                    {
+                        "session": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "/",
+                        "description": "Application server"
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Privileges"
+                ],
+                "summary": "Update privilege",
+                "operationId": "649c2c0c67d4a870564159559496f02c",
+                "parameters": [
+                    {
+                        "name": "privilege",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Privilege updated"
+                    }
+                },
+                "security": [
+                    {
+                        "session": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "/",
+                        "description": "Application server"
+                    }
+                ]
+            }
+        },
+        "/api/pages": {
+            "get": {
+                "tags": [
+                    "Pages"
+                ],
+                "summary": "List pages with search/status/menu filters",
+                "operationId": "bd25f14a54fc6bb34025a84d69aec990",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "draft",
+                                "published",
+                                "scheduled"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "menu_id",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "maximum": 100,
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Paginated pages"
+                    }
+                },
+                "security": [
+                    {
+                        "session": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "/",
+                        "description": "Application server"
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Pages"
+                ],
+                "summary": "Create a CMS page",
+                "operationId": "0efbe6d486dabd18c6377ed77fbd72d9",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "title",
+                                    "slug",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "slug": {
+                                        "type": "string",
+                                        "example": "about-us"
+                                    },
+                                    "body": {
+                                        "description": "CKEditor HTML; sanitized before storage",
+                                        "type": "string"
+                                    },
+                                    "blocks": {
+                                        "description": "JSON-encoded structured page blocks",
+                                        "type": "string"
+                                    },
+                                    "is_home": {
+                                        "type": "boolean"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "draft",
+                                            "published"
+                                        ]
+                                    },
+                                    "publish_at": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "nullable": true
+                                    },
+                                    "cover_image": {
+                                        "type": "string",
+                                        "format": "binary",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Page created"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "session": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "/",
+                        "description": "Application server"
+                    }
+                ]
+            }
+        },
+        "/api/pages/trash": {
+            "get": {
+                "tags": [
+                    "Pages"
+                ],
+                "summary": "List trashed pages",
+                "operationId": "a2cba49c7beb99358f80da01ade618f0",
+                "responses": {
+                    "200": {
+                        "description": "Paginated trashed pages"
+                    }
+                },
+                "security": [
+                    {
+                        "session": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "/",
+                        "description": "Application server"
+                    }
+                ]
+            }
+        },
+        "/api/pages/{page}": {
+            "get": {
+                "tags": [
+                    "Pages"
+                ],
+                "summary": "Get page",
+                "operationId": "31f90a576ac304fc4fa0584269c14e81",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Page"
+                    }
+                },
+                "security": [
+                    {
+                        "session": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "/",
+                        "description": "Application server"
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Pages"
+                ],
+                "summary": "Move page to trash",
+                "operationId": "ff62b84cc588ab9c675613524f03de98",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Moved to trash"
+                    }
+                },
+                "security": [
+                    {
+                        "session": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "/",
+                        "description": "Application server"
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Pages"
+                ],
+                "summary": "Update a CMS page",
+                "operationId": "a43305cc9355a86f7b6b3d1044f04a0b",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "title": {
+                                        "type": "string"
+                                    },
+                                    "slug": {
+                                        "type": "string"
+                                    },
+                                    "body": {
+                                        "description": "CKEditor HTML; sanitized before storage",
+                                        "type": "string"
+                                    },
+                                    "blocks": {
+                                        "description": "JSON-encoded structured page blocks",
+                                        "type": "string"
+                                    },
+                                    "is_home": {
+                                        "type": "boolean"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "draft",
+                                            "published"
+                                        ]
+                                    },
+                                    "publish_at": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "nullable": true
+                                    },
+                                    "cover_image": {
+                                        "type": "string",
+                                        "format": "binary",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Page updated"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "session": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "/",
+                        "description": "Application server"
+                    }
+                ]
+            }
+        },
+        "/api/pages/{page}/restore": {
+            "post": {
+                "tags": [
+                    "Pages"
+                ],
+                "summary": "Restore trashed page",
+                "operationId": "8d968031edf1e452d42029eb318fcba8",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Page restored"
+                    }
+                },
+                "security": [
+                    {
+                        "session": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "/",
+                        "description": "Application server"
+                    }
+                ]
+            }
+        },
+        "/api/pages/{page}/force": {
+            "delete": {
+                "tags": [
+                    "Pages"
+                ],
+                "summary": "Permanently delete trashed page",
+                "operationId": "b89e0d1e12288ea6d270f017e29f3019",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Permanently deleted"
+                    }
+                },
+                "security": [
+                    {
+                        "session": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "/",
+                        "description": "Application server"
+                    }
+                ]
+            }
+        },
+        "/api/editor/images": {
+            "post": {
+                "tags": [
+                    "Editor"
+                ],
+                "summary": "Upload an image for CKEditor or page blocks",
+                "operationId": "306956c070d04c36eeaa97a23d0c7184",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "upload"
+                                ],
+                                "properties": {
+                                    "upload": {
+                                        "description": "JPG, PNG or WebP up to 8 MB",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Image uploaded; response contains its public URL"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "session": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "/",
+                        "description": "Application server"
+                    }
+                ]
+            }
+        },
+        "/api/menu-items": {
+            "get": {
+                "tags": [
+                    "Menus"
+                ],
+                "summary": "List menu items",
+                "operationId": "e3552c5946f64a6db9474a1ecceee064",
+                "responses": {
+                    "200": {
+                        "description": "Menu items"
+                    }
+                },
+                "security": [
+                    {
+                        "session": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "/",
+                        "description": "Application server"
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Menus"
+                ],
+                "summary": "Create menu item",
+                "operationId": "de728cbc540cd95f108dd3dd2a6bd079",
+                "responses": {
+                    "201": {
+                        "description": "Menu item created"
+                    }
+                },
+                "security": [
+                    {
+                        "session": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "/",
+                        "description": "Application server"
+                    }
+                ]
+            }
+        },
+        "/api/menu-items/reorder": {
+            "put": {
+                "tags": [
+                    "Menus"
+                ],
+                "summary": "Persist menu ordering and nesting",
+                "operationId": "0b9d63c0c75513a5dce456ffdd8af8d2",
+                "responses": {
+                    "200": {
+                        "description": "Menu order saved"
+                    },
+                    "422": {
+                        "description": "Invalid hierarchy"
+                    }
+                },
+                "security": [
+                    {
+                        "session": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "/",
+                        "description": "Application server"
+                    }
+                ]
+            }
+        },
+        "/api/menu-items/{menuItem}": {
+            "get": {
+                "tags": [
+                    "Menus"
+                ],
+                "summary": "Get menu item",
+                "operationId": "c42255fe41913ba6369140fe82fca87f",
+                "parameters": [
+                    {
+                        "name": "menuItem",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Menu item"
+                    }
+                },
+                "security": [
+                    {
+                        "session": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "/",
+                        "description": "Application server"
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Menus"
+                ],
+                "summary": "Delete menu item and nested descendants",
+                "operationId": "aed2cd0c2ae83d7505110cb7a34f0434",
+                "parameters": [
+                    {
+                        "name": "menuItem",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Deleted"
+                    }
+                },
+                "security": [
+                    {
+                        "session": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "/",
+                        "description": "Application server"
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Menus"
+                ],
+                "summary": "Update menu item",
+                "operationId": "eeeb357a926f5072ae4d052493d5bf3b",
+                "parameters": [
+                    {
+                        "name": "menuItem",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Menu item updated"
+                    },
+                    "422": {
+                        "description": "Invalid hierarchy"
+                    }
+                },
+                "security": [
+                    {
+                        "session": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "/",
+                        "description": "Application server"
+                    }
+                ]
+            }
+        },
+        "/api/public/navigation": {
+            "get": {
+                "tags": [
+                    "Public"
+                ],
+                "summary": "Get visible public navigation tree",
+                "operationId": "9970a766edae2987168f5fa9f3ce0f03",
+                "responses": {
+                    "200": {
+                        "description": "Published navigation tree"
+                    }
+                },
+                "servers": [
+                    {
+                        "url": "/",
+                        "description": "Application server"
+                    }
+                ]
+            }
+        },
+        "/api/public/home": {
+            "get": {
+                "tags": [
+                    "Public"
+                ],
+                "summary": "Get the currently published home page",
+                "operationId": "a7b590db84fc1cdcdf21c29da6923ef7",
+                "responses": {
+                    "200": {
+                        "description": "Published home page including CKEditor body and structured blocks"
+                    },
+                    "404": {
+                        "description": "No published home page is currently due"
+                    }
+                },
+                "servers": [
+                    {
+                        "url": "/",
+                        "description": "Application server"
+                    }
+                ]
+            }
+        },
+        "/api/public/pages/{slug}": {
+            "get": {
+                "tags": [
+                    "Public"
+                ],
+                "summary": "Resolve a currently published page by slug",
+                "operationId": "2b4eb385c20c3cd2ea74e564843f2e63",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Published page metadata"
+                    },
+                    "404": {
+                        "description": "Draft, scheduled, deleted, or unknown page"
+                    }
+                },
+                "servers": [
+                    {
+                        "url": "/",
+                        "description": "Application server"
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "session": {
+                "type": "apiKey",
+                "description": "First-party Laravel Sanctum session cookie. Sign in through POST /api/auth/login.",
+                "name": "laravel_session",
+                "in": "cookie"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Authentication"
+        },
+        {
+            "name": "Dashboard"
+        },
+        {
+            "name": "Users"
+        },
+        {
+            "name": "Roles"
+        },
+        {
+            "name": "Privileges"
+        },
+        {
+            "name": "Pages"
+        },
+        {
+            "name": "Editor"
+        },
+        {
+            "name": "Menus"
+        },
+        {
+            "name": "Public"
+        }
+    ]
+}

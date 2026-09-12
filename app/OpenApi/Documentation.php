@@ -4,12 +4,65 @@ namespace App\OpenApi;
 
 use OpenApi\Attributes as OA;
 
-#[OA\Info(
-    version: '1.0.0',
-    title: 'Dar Al Sharq CMS API',
-    description: 'API documentation for the CMS assignment.'
-)]
-#[OA\Server(url: '/api', description: 'Application API')]
-final class Documentation
+#[OA\Info(version: '1.0.0', title: 'Dar Al Sharq CMS API', description: 'Laravel 12 CMS API for authentication, privilege-based administration, page publishing, menus, and public content.')]
+#[OA\Server(url: '/', description: 'Application server')]
+#[OA\SecurityScheme(securityScheme: 'session', type: 'apiKey', in: 'cookie', name: 'laravel_session', description: 'First-party Laravel Sanctum session cookie. Sign in through POST /api/auth/login.')]
+#[OA\Tag(name: 'Authentication')]
+#[OA\Tag(name: 'Dashboard')]
+#[OA\Tag(name: 'Users')]
+#[OA\Tag(name: 'Roles')]
+#[OA\Tag(name: 'Privileges')]
+#[OA\Tag(name: 'Pages')]
+#[OA\Tag(name: 'Editor')]
+#[OA\Tag(name: 'Menus')]
+#[OA\Tag(name: 'Public')]
+
+#[OA\Post(path: '/api/auth/login', tags: ['Authentication'], summary: 'Sign in with email and password', requestBody: new OA\RequestBody(required: true, content: new OA\JsonContent(required: ['email','password'], properties: [new OA\Property(property: 'email', type: 'string', format: 'email'), new OA\Property(property: 'password', type: 'string', format: 'password')])), responses: [new OA\Response(response: 200, description: 'Authenticated user'), new OA\Response(response: 422, description: 'Invalid credentials')])]
+#[OA\Get(path: '/api/auth/me', tags: ['Authentication'], summary: 'Get authenticated user and privileges', security: [['session' => []]], responses: [new OA\Response(response: 200, description: 'Authenticated user'), new OA\Response(response: 401, description: 'Unauthenticated')])]
+#[OA\Post(path: '/api/auth/logout', tags: ['Authentication'], summary: 'Sign out', security: [['session' => []]], responses: [new OA\Response(response: 200, description: 'Logged out'), new OA\Response(response: 401, description: 'Unauthenticated')])]
+
+#[OA\Get(path: '/api/dashboard', tags: ['Dashboard'], summary: 'Get workspace dashboard metrics', security: [['session' => []]], responses: [new OA\Response(response: 200, description: 'Dashboard data'), new OA\Response(response: 403, description: 'Forbidden')])]
+
+#[OA\Get(path: '/api/users', tags: ['Users'], summary: 'List users', security: [['session' => []]], responses: [new OA\Response(response: 200, description: 'Paginated users'), new OA\Response(response: 403, description: 'Forbidden')])]
+#[OA\Post(path: '/api/users', tags: ['Users'], summary: 'Create user', security: [['session' => []]], responses: [new OA\Response(response: 201, description: 'User created'), new OA\Response(response: 422, description: 'Validation error')])]
+#[OA\Get(path: '/api/users/{user}', tags: ['Users'], summary: 'Get user', security: [['session' => []]], parameters: [new OA\Parameter(name: 'user', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))], responses: [new OA\Response(response: 200, description: 'User'), new OA\Response(response: 404, description: 'Not found')])]
+#[OA\Patch(path: '/api/users/{user}', tags: ['Users'], summary: 'Update user', security: [['session' => []]], parameters: [new OA\Parameter(name: 'user', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))], responses: [new OA\Response(response: 200, description: 'User updated'), new OA\Response(response: 422, description: 'Validation error')])]
+#[OA\Delete(path: '/api/users/{user}', tags: ['Users'], summary: 'Soft-delete user', security: [['session' => []]], parameters: [new OA\Parameter(name: 'user', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))], responses: [new OA\Response(response: 204, description: 'Deleted'), new OA\Response(response: 422, description: 'Cannot delete current user')])]
+
+#[OA\Get(path: '/api/roles', tags: ['Roles'], summary: 'List roles', security: [['session' => []]], responses: [new OA\Response(response: 200, description: 'Roles')])]
+#[OA\Post(path: '/api/roles', tags: ['Roles'], summary: 'Create role', security: [['session' => []]], responses: [new OA\Response(response: 201, description: 'Role created'), new OA\Response(response: 422, description: 'Validation error')])]
+#[OA\Get(path: '/api/roles/{role}', tags: ['Roles'], summary: 'Get role', security: [['session' => []]], parameters: [new OA\Parameter(name: 'role', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))], responses: [new OA\Response(response: 200, description: 'Role')])]
+#[OA\Patch(path: '/api/roles/{role}', tags: ['Roles'], summary: 'Update role and privileges', security: [['session' => []]], parameters: [new OA\Parameter(name: 'role', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))], responses: [new OA\Response(response: 200, description: 'Role updated')])]
+#[OA\Delete(path: '/api/roles/{role}', tags: ['Roles'], summary: 'Delete role', security: [['session' => []]], parameters: [new OA\Parameter(name: 'role', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))], responses: [new OA\Response(response: 204, description: 'Deleted'), new OA\Response(response: 409, description: 'Role still has users')])]
+
+#[OA\Get(path: '/api/privileges', tags: ['Privileges'], summary: 'List privileges', security: [['session' => []]], responses: [new OA\Response(response: 200, description: 'Privileges')])]
+#[OA\Post(path: '/api/privileges', tags: ['Privileges'], summary: 'Create privilege', security: [['session' => []]], responses: [new OA\Response(response: 201, description: 'Privilege created')])]
+#[OA\Get(path: '/api/privileges/{privilege}', tags: ['Privileges'], summary: 'Get privilege', security: [['session' => []]], parameters: [new OA\Parameter(name: 'privilege', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))], responses: [new OA\Response(response: 200, description: 'Privilege')])]
+#[OA\Patch(path: '/api/privileges/{privilege}', tags: ['Privileges'], summary: 'Update privilege', security: [['session' => []]], parameters: [new OA\Parameter(name: 'privilege', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))], responses: [new OA\Response(response: 200, description: 'Privilege updated')])]
+#[OA\Delete(path: '/api/privileges/{privilege}', tags: ['Privileges'], summary: 'Delete privilege', security: [['session' => []]], parameters: [new OA\Parameter(name: 'privilege', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))], responses: [new OA\Response(response: 204, description: 'Deleted')])]
+
+#[OA\Get(path: '/api/pages', tags: ['Pages'], summary: 'List pages with search/status/menu filters', security: [['session' => []]], parameters: [new OA\Parameter(name: 'search', in: 'query', schema: new OA\Schema(type: 'string')), new OA\Parameter(name: 'status', in: 'query', schema: new OA\Schema(type: 'string', enum: ['draft','published','scheduled'])), new OA\Parameter(name: 'menu_id', in: 'query', schema: new OA\Schema(type: 'integer')), new OA\Parameter(name: 'per_page', in: 'query', schema: new OA\Schema(type: 'integer', minimum: 1, maximum: 100))], responses: [new OA\Response(response: 200, description: 'Paginated pages')])]
+#[OA\Post(path: '/api/pages', tags: ['Pages'], summary: 'Create a CMS page', security: [['session' => []]], requestBody: new OA\RequestBody(required: true, content: new OA\MediaType(mediaType: 'multipart/form-data', schema: new OA\Schema(required: ['title','slug','status'], properties: [new OA\Property(property: 'title', type: 'string', maxLength: 255), new OA\Property(property: 'slug', type: 'string', example: 'about-us'), new OA\Property(property: 'body', type: 'string', description: 'CKEditor HTML; sanitized before storage'), new OA\Property(property: 'blocks', type: 'string', description: 'JSON-encoded structured page blocks'), new OA\Property(property: 'is_home', type: 'boolean'), new OA\Property(property: 'status', type: 'string', enum: ['draft','published']), new OA\Property(property: 'publish_at', type: 'string', format: 'date-time', nullable: true), new OA\Property(property: 'cover_image', type: 'string', format: 'binary', nullable: true)]))), responses: [new OA\Response(response: 201, description: 'Page created'), new OA\Response(response: 422, description: 'Validation error')])]
+#[OA\Get(path: '/api/pages/trash', tags: ['Pages'], summary: 'List trashed pages', security: [['session' => []]], responses: [new OA\Response(response: 200, description: 'Paginated trashed pages')])]
+#[OA\Get(path: '/api/pages/{page}', tags: ['Pages'], summary: 'Get page', security: [['session' => []]], parameters: [new OA\Parameter(name: 'page', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))], responses: [new OA\Response(response: 200, description: 'Page')])]
+#[OA\Patch(path: '/api/pages/{page}', tags: ['Pages'], summary: 'Update a CMS page', security: [['session' => []]], parameters: [new OA\Parameter(name: 'page', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))], requestBody: new OA\RequestBody(content: new OA\MediaType(mediaType: 'multipart/form-data', schema: new OA\Schema(properties: [new OA\Property(property: 'title', type: 'string'), new OA\Property(property: 'slug', type: 'string'), new OA\Property(property: 'body', type: 'string', description: 'CKEditor HTML; sanitized before storage'), new OA\Property(property: 'blocks', type: 'string', description: 'JSON-encoded structured page blocks'), new OA\Property(property: 'is_home', type: 'boolean'), new OA\Property(property: 'status', type: 'string', enum: ['draft','published']), new OA\Property(property: 'publish_at', type: 'string', format: 'date-time', nullable: true), new OA\Property(property: 'cover_image', type: 'string', format: 'binary', nullable: true)]))), responses: [new OA\Response(response: 200, description: 'Page updated'), new OA\Response(response: 422, description: 'Validation error')])]
+#[OA\Delete(path: '/api/pages/{page}', tags: ['Pages'], summary: 'Move page to trash', security: [['session' => []]], parameters: [new OA\Parameter(name: 'page', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))], responses: [new OA\Response(response: 204, description: 'Moved to trash')])]
+#[OA\Post(path: '/api/pages/{page}/restore', tags: ['Pages'], summary: 'Restore trashed page', security: [['session' => []]], parameters: [new OA\Parameter(name: 'page', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))], responses: [new OA\Response(response: 200, description: 'Page restored')])]
+#[OA\Delete(path: '/api/pages/{page}/force', tags: ['Pages'], summary: 'Permanently delete trashed page', security: [['session' => []]], parameters: [new OA\Parameter(name: 'page', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))], responses: [new OA\Response(response: 204, description: 'Permanently deleted')])]
+
+#[OA\Post(path: '/api/editor/images', tags: ['Editor'], summary: 'Upload an image for CKEditor or page blocks', security: [['session' => []]], requestBody: new OA\RequestBody(required: true, content: new OA\MediaType(mediaType: 'multipart/form-data', schema: new OA\Schema(required: ['upload'], properties: [new OA\Property(property: 'upload', type: 'string', format: 'binary', description: 'JPG, PNG or WebP up to 8 MB')]))), responses: [new OA\Response(response: 201, description: 'Image uploaded; response contains its public URL'), new OA\Response(response: 422, description: 'Validation error'), new OA\Response(response: 403, description: 'Forbidden')])]
+
+#[OA\Get(path: '/api/menu-items', tags: ['Menus'], summary: 'List menu items', security: [['session' => []]], responses: [new OA\Response(response: 200, description: 'Menu items')])]
+#[OA\Post(path: '/api/menu-items', tags: ['Menus'], summary: 'Create menu item', security: [['session' => []]], responses: [new OA\Response(response: 201, description: 'Menu item created')])]
+#[OA\Put(path: '/api/menu-items/reorder', tags: ['Menus'], summary: 'Persist menu ordering and nesting', security: [['session' => []]], responses: [new OA\Response(response: 200, description: 'Menu order saved'), new OA\Response(response: 422, description: 'Invalid hierarchy')])]
+#[OA\Get(path: '/api/menu-items/{menuItem}', tags: ['Menus'], summary: 'Get menu item', security: [['session' => []]], parameters: [new OA\Parameter(name: 'menuItem', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))], responses: [new OA\Response(response: 200, description: 'Menu item')])]
+#[OA\Patch(path: '/api/menu-items/{menuItem}', tags: ['Menus'], summary: 'Update menu item', security: [['session' => []]], parameters: [new OA\Parameter(name: 'menuItem', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))], responses: [new OA\Response(response: 200, description: 'Menu item updated'), new OA\Response(response: 422, description: 'Invalid hierarchy')])]
+#[OA\Delete(path: '/api/menu-items/{menuItem}', tags: ['Menus'], summary: 'Delete menu item and nested descendants', security: [['session' => []]], parameters: [new OA\Parameter(name: 'menuItem', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))], responses: [new OA\Response(response: 204, description: 'Deleted')])]
+
+#[OA\Get(path: '/api/public/navigation', tags: ['Public'], summary: 'Get visible public navigation tree', responses: [new OA\Response(response: 200, description: 'Published navigation tree')])]
+#[OA\Get(path: '/api/public/home', tags: ['Public'], summary: 'Get the currently published home page', responses: [new OA\Response(response: 200, description: 'Published home page including CKEditor body and structured blocks'), new OA\Response(response: 404, description: 'No published home page is currently due')])]
+
+#[OA\Get(path: '/api/public/pages/{slug}', tags: ['Public'], summary: 'Resolve a currently published page by slug', parameters: [new OA\Parameter(name: 'slug', in: 'path', required: true, schema: new OA\Schema(type: 'string'))], responses: [new OA\Response(response: 200, description: 'Published page metadata'), new OA\Response(response: 404, description: 'Draft, scheduled, deleted, or unknown page')])]
+class Documentation
 {
 }
