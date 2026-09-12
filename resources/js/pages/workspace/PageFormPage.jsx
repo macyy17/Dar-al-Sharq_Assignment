@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { CalendarDays, Image, Info, Save } from 'lucide-react';
 import api, { apiErrorMessage } from '../../api/client';
 import PageContentEditor from '../../components/editor/PageContentEditor';
+import PageLivePreview from '../../components/editor/PageLivePreview';
 import PageBlockEditor from '../../components/blocks/PageBlockEditor';
 import PageHeader from '../../components/workspace/PageHeader';
 import FormCard from '../../components/workspace/FormCard';
@@ -94,7 +95,7 @@ export default function PageFormPage({ role }) {
         <PageHeader
             eyebrow="Content"
             title={editing ? `Edit ${page?.title || 'page'}` : 'Create page'}
-            description="Configure page content, metadata, cover image and publishing."
+            description="Edit on the right while the live preview updates on the left."
             actions={<>
                 <Link to={`${base}/pages`} className="inline-flex h-10 items-center rounded-lg border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700">Cancel</Link>
                 <button disabled={submitting} className="inline-flex h-10 items-center gap-2 rounded-lg bg-teal-700 px-4 text-sm font-semibold text-white disabled:opacity-60"><Save className="h-4 w-4" />{submitting ? 'Saving…' : editing ? 'Save changes' : 'Create page'}</button>
@@ -103,6 +104,11 @@ export default function PageFormPage({ role }) {
 
         {error ? <div className="rounded-xl bg-rose-50 p-4 text-sm text-rose-700">{error}</div> : null}
 
+        <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(600px,1fr)]">
+            <div className="min-w-0">
+                <PageLivePreview form={form} page={page} />
+            </div>
+            <div className="min-w-0 space-y-6">
         <FormCard title="Page details" description="Core information used in listings and public navigation.">
             <div className="grid gap-5 sm:grid-cols-2">
                 <label className="sm:col-span-2">
@@ -160,5 +166,7 @@ export default function PageFormPage({ role }) {
                 <div className="rounded-xl bg-slate-50 p-4"><p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Last updated</p><p className="mt-2 text-sm font-semibold text-slate-800">{page?.updated_at ? new Date(page.updated_at).toLocaleString() : '—'}</p></div>
             </div>
         </FormCard> : null}
+            </div>
+        </div>
     </form>;
 }

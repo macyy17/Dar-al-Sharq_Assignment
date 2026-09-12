@@ -1,17 +1,21 @@
 import { useEffect, useState } from 'react';
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { ChevronRight, ExternalLink, LogOut, Menu, X } from 'lucide-react';
+import { ChevronRight, ExternalLink, LogOut, Menu, PanelLeftClose, PanelLeftOpen, X } from 'lucide-react';
 import { navigationForPrivileges } from '../../data/workspace';
 import { useAuth } from '../../auth/AuthContext';
 
 export default function WorkspaceShell({ role }) {
     const [mobileOpen, setMobileOpen] = useState(false);
+    const [sidebarOpen, setSidebarOpen] = useState(() => typeof window === 'undefined' ? true : window.localStorage.getItem('cms-sidebar') !== 'closed');
     const location = useLocation();
     const navigate = useNavigate();
     const { user, logout } = useAuth();
     const navigation = navigationForPrivileges(user?.privileges || [], `/${role}`);
 
     useEffect(() => setMobileOpen(false), [location.pathname]);
+    useEffect(() => {
+        window.localStorage.setItem('cms-sidebar', sidebarOpen ? 'open' : 'closed');
+    }, [sidebarOpen]);
 
     async function signOut() {
         await logout();
@@ -31,8 +35,17 @@ export default function WorkspaceShell({ role }) {
     </>;
 
     return <div className="min-h-screen bg-[#f6f7fa] text-slate-950">
-        <aside className="fixed inset-y-0 start-0 z-40 hidden w-64 flex-col bg-[#111827] lg:flex">{sidebar}</aside>
+        <aside className={`fixed inset-y-0 start-0 z-40 hidden w-64 flex-col bg-[#111827] ${sidebarOpen ? 'lg:flex' : 'lg:hidden'}`}>{sidebar}</aside>
         {mobileOpen ? <div className="fixed inset-0 z-50 lg:hidden"><button className="absolute inset-0 bg-slate-950/50" onClick={() => setMobileOpen(false)} aria-label="Close navigation overlay" /><aside className="relative flex h-full w-72 flex-col bg-[#111827] shadow-2xl">{sidebar}</aside></div> : null}
-        <div className="lg:ps-64"><div className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-slate-200 bg-white/90 px-4 backdrop-blur sm:px-6 lg:px-8"><button className="rounded-lg border border-slate-200 p-2 text-slate-600 lg:hidden" onClick={() => setMobileOpen(true)} aria-label="Open navigation"><Menu className="h-5 w-5" /></button><div className="flex-1" /><a href="/" className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100">Public site <ExternalLink className="h-4 w-4" /></a><div className="grid h-9 w-9 place-items-center rounded-full bg-teal-700 text-xs font-bold text-white">{initials}</div></div><main className="mx-auto w-full max-w-[1500px] p-4 sm:p-6 lg:p-8"><Outlet /></main></div>
+        <div className={`transition-[padding] duration-200 ${sidebarOpen ? 'lg:ps-64' : 'lg:ps-0'}`}>
+            <div className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-slate-200 bg-white/90 px-4 backdrop-blur sm:px-6 lg:px-8">
+                <button className="rounded-lg border border-slate-200 p-2 text-slate-600 lg:hidden" onClick={() => setMobileOpen(true)} aria-label="Open navigation"><Menu className="h-5 w-5" /></button>
+                <button type="button" className="hidden rounded-lg border border-slate-200 p-2 text-slate-600 transition hover:bg-slate-100 lg:inline-flex" onClick={() => setSidebarOpen((open) => !open)} aria-label={sidebarOpen ? 'Close sidebar' : 'Open sidebar'} title={sidebarOpen ? 'Close sidebar' : 'Open sidebar'}>{sidebarOpen ? <PanelLeftClose className="h-5 w-5" /> : <PanelLeftOpen className="h-5 w-5" />}</button>
+                <div className="flex-1" />
+                <a href="/" className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100">Public site <ExternalLink className="h-4 w-4" /></a>
+                <div className="grid h-9 w-9 place-items-center rounded-full bg-teal-700 text-xs font-bold text-white">{initials}</div>
+            </div>
+            <main className="mx-auto w-full max-w-[1900px] p-4 sm:p-6 lg:p-8"><Outlet /></main>
+        </div>
     </div>;
 }
